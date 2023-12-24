@@ -17,7 +17,7 @@ public class TileManager : MonoBehaviour
 
         
         // 测试旋转
-        tile1.RotateTile(45f);
-        tile2.RotateTile(60f);
+        tile1.RotateTile(90f);
+        tile2.RotateTile(90f);
     }
 }
