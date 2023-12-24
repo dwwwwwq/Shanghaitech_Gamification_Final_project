@@ -11,6 +11,41 @@ public class Tile : MonoBehaviour
     public float rotationSpeed = 5f; // 旋转速度
 
     private Quaternion targetRotation;
+    private List<Wall> wallsOnTile = new List<Wall>();  // 保存格子上的墙的列表
+
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            // 碰到玩家，通知 TileManager
+            TileManager.Instance.PlayerEnteredTile(this);
+        }
+        
+        if (other.CompareTag("Wall"))
+        {
+            // 碰到墙，保存引用到列表
+            Wall wall = other.GetComponent<Wall>();
+            if (wall != null)
+            {
+                wallsOnTile.Add(wall);
+                wall.SetAttachedTile(this);  // 设置墙所在的格子
+            }
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Wall"))
+        {
+            // 离开墙，从列表中移除引用
+            Wall wall = other.GetComponent<Wall>();
+            if (wall != null)
+            {
+                wallsOnTile.Remove(wall);
+            }
+        }
+    }
 
     public void RotateTileLeft()
     {
@@ -27,26 +62,45 @@ public class Tile : MonoBehaviour
     }
 
     private IEnumerator RotateOverTime()
+{
+    float elapsedTime = 0f;
+    Quaternion startRotation = transform.rotation;
+
+    foreach (Wall wall in wallsOnTile)
     {
-        float elapsedTime = 0f;
-        Quaternion startRotation = transform.rotation;
-
-        while (elapsedTime < 1f)
+        if (wall.IsOnTile(this))
         {
-            transform.rotation = Quaternion.Lerp(startRotation, targetRotation, elapsedTime);
-            elapsedTime += Time.deltaTime * rotationSpeed;
-            yield return null;
+            wall.transform.parent = transform;
         }
-
-        transform.rotation = targetRotation;
+        
     }
 
-    private void OnTriggerEnter(Collider other)
+    while (elapsedTime < 1f)
     {
-        if (other.CompareTag("Player"))
-        {
-            // 碰到玩家，通知 TileManager
-            TileManager.Instance.PlayerEnteredTile(this);
-        }
+        transform.rotation = Quaternion.Lerp(startRotation, targetRotation, elapsedTime);
+        elapsedTime += Time.deltaTime * rotationSpeed;
+        yield return null;
     }
+
+    transform.rotation = targetRotation;
+
+    // 旋转完成后再设置和解除关系
+    
+
+    
+    foreach (Wall wall in wallsOnTile)
+    {
+        wall.transform.parent = null;
+    }
+}
+    // private void OnTriggerEnter(Collider other)
+    // {
+    //     if (other.CompareTag("Player"))
+    //     {
+    //         // 碰到玩家，通知 TileManager
+    //         TileManager.Instance.PlayerEnteredTile(this);
+    //     }
+    // }
+
+    
 }

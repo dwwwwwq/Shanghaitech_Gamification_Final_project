@@ -18,6 +18,8 @@ public class TileManager : Singleton<TileManager>
         {
             // 向左旋转格子
             currentPlayerTile.RotateTileLeft();
+
+            // currentPlayerTile.NotifyWallsToRotateLeft();
         }
     }
 
@@ -27,6 +29,8 @@ public class TileManager : Singleton<TileManager>
         {
             // 向右旋转格子
             currentPlayerTile.RotateTileRight();
+
+            // currentPlayerTile.NotifyWallsToRotateRight();
         }
     }
 }

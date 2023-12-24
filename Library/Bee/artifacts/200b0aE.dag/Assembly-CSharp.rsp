@@ -355,6 +355,7 @@
 "Assets/scripts/singleton.cs"
 "Assets/scripts/tile.cs"
 "Assets/scripts/tileManager.cs"
+"Assets/scripts/wall.cs"
 -langversion:9.0
 
 /deterministic
