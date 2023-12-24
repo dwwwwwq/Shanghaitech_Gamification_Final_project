@@ -24,12 +24,14 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.A) && !isRotating && !isMoving)
         {
             StartCoroutine(RotateOverTime(transform.eulerAngles.y - rotationAmount));
+            TileManager.Instance.RotateCurrentPlayerTileLeft();  // 向左旋转当前格子
         }
 
         // 检测按下 D 键
         if (Input.GetKeyDown(KeyCode.D) && !isRotating && !isMoving)
         {
             StartCoroutine(RotateOverTime(transform.eulerAngles.y + rotationAmount));
+            TileManager.Instance.RotateCurrentPlayerTileRight();  // 向右旋转当前格子
         }
 
         if (Input.GetKey(KeyCode.W))

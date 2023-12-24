@@ -2,22 +2,31 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TileManager : MonoBehaviour
+public class TileManager : Singleton<TileManager>
 {
-    public GameObject tilePrefab1;  // 在 Unity 编辑器中关联 Cube 预制体
-    public GameObject tilePrefab2;
-
-    void Start()
+    
+    private Tile currentPlayerTile;
+    public void PlayerEnteredTile(Tile tile)
     {
-        // 初始化格子
-        Tile tile1 = tilePrefab1.GetComponent<Tile>();
+        currentPlayerTile = tile;
+        Debug.Log(currentPlayerTile);
+    }
 
-        Tile tile2 = tilePrefab2.GetComponent<Tile>();
-        
+    public void RotateCurrentPlayerTileLeft()
+    {
+        if (currentPlayerTile != null)
+        {
+            // 向左旋转格子
+            currentPlayerTile.RotateTileLeft();
+        }
+    }
 
-        
-        // 测试旋转
-        tile1.RotateTile(90f);
-        tile2.RotateTile(90f);
+    public void RotateCurrentPlayerTileRight()
+    {
+        if (currentPlayerTile != null)
+        {
+            // 向右旋转格子
+            currentPlayerTile.RotateTileRight();
+        }
     }
 }
