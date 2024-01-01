@@ -19,7 +19,18 @@ public class Wall : MonoBehaviour
     public bool IsOnTile(Tile tileToCheck)
     {
         return attachedTile == tileToCheck;
+    } 
+
+    public void DisableWallCollision()
+    {
+        GetComponent<Collider>().enabled = false;
     }
+
+    public void EnableWallCollision()
+    {
+        GetComponent<Collider>().enabled = true;
+    }
+
 
     // 在墙被旋转时调用的方法
     // public void RotateWithTileLeft(Vector3 tileRotationCenter)
