@@ -9,7 +9,7 @@ public class TileManager : Singleton<TileManager>
     public void PlayerEnteredTile(Tile tile)
     {
         currentPlayerTile = tile;
-        Debug.Log(currentPlayerTile);
+        // Debug.Log(currentPlayerTile);
     }
 
     public void RotateCurrentPlayerTileLeft()

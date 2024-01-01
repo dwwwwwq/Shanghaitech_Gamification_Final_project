@@ -10,12 +10,16 @@ public class PlayerController : MonoBehaviour
 
     private bool isRotating = false;  // 是否正在旋转
     private bool isMoving = false;    // 是否正在移动
+    private bool isHoldingSpace = false;  // 是否按住空格键
     private Rigidbody rb;
+    private Coroutine moveCoroutine;
+    private Wall currentDetectedWall;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true; // 不允许物理引擎旋转角色
+        currentDetectedWall = null; // 添加这行来初始化 currentDetectedWall
     }
 
     void Update()
@@ -44,7 +48,69 @@ public class PlayerController : MonoBehaviour
         {
             MovePlayer(Vector3.back);
         }
+
+        // 检测按住空格键
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            isHoldingSpace = true;
+        }
+        else if (Input.GetKeyUp(KeyCode.Space))
+        {
+            isHoldingSpace = false;
+            Debug.Log("isHoldingSpace=" + isHoldingSpace);
+        }
+
+        // 在这里进行射线检测
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, transform.forward, out hit, 4f))
+        {
+            Wall wall = hit.collider.GetComponent<Wall>();
+            if (wall != null)
+            {
+                if (isHoldingSpace)
+                {
+                    // 如果射线击中了墙且玩家按住了空格键，标记墙为可移动
+                    wall.MarkAsMovable();
+                    currentDetectedWall = wall;
+                }
+                else
+                {
+                    // 如果射线击中了墙但玩家没有按住空格键，标记墙为不可移动，并重置当前被检测到的墙
+                    wall.MarkAsUnmovable();
+                    currentDetectedWall = null;
+                    Debug.Log("MarkAsUnmovable");
+                }
+            }
+            else if (currentDetectedWall != null)
+            {
+                // 如果射线没有击中墙且当前有被检测到的墙，标记当前被检测到的墙为不可移动，并重置当前被检测到的墙
+                currentDetectedWall.MarkAsUnmovable();
+                currentDetectedWall = null;
+                Debug.Log("MarkAsUnmovable");
+            }
+        }
+
+
+        // 在这里加入终止协程的逻辑
+        if (!isHoldingSpace && moveCoroutine != null)
+        {
+            StopCoroutine(moveCoroutine);
+        }
+
+        // 调用处理不可移动墙的逻辑的方法
+        // HandleUnmovableWall();
     }
+
+    // 处理不可移动墙的逻辑的方法
+    // private void HandleUnmovableWall()
+    // {
+    //     if (currentDetectedWall != null && !Physics.Raycast(transform.position, transform.forward, 4f))
+    //     {
+    //         currentDetectedWall.MarkAsUnmovable();
+    //         currentDetectedWall = null;
+    //         Debug.Log("MarkAsUnmovable");
+    //     }
+    // }
 
     // 逐渐过渡旋转的协程
     IEnumerator RotateOverTime(float targetAngle)
