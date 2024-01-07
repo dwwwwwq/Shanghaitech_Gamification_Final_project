@@ -60,9 +60,11 @@ public class PlayerController : MonoBehaviour
             Debug.Log("isHoldingSpace=" + isHoldingSpace);
         }
 
+        int wallLayerMask = 1 << LayerMask.NameToLayer("Wall"); // 获取 "Wall" 图层的 LayerMask
+
         // 在这里进行射线检测
         RaycastHit hit;
-        if (Physics.Raycast(transform.position, transform.forward, out hit, 4f))
+        if (Physics.Raycast(transform.position, transform.forward, out hit, 4f, wallLayerMask))
         {
             Wall wall = hit.collider.GetComponent<Wall>();
             if (wall != null)
@@ -89,7 +91,6 @@ public class PlayerController : MonoBehaviour
                 Debug.Log("MarkAsUnmovable");
             }
         }
-
 
         // 在这里加入终止协程的逻辑
         if (!isHoldingSpace && moveCoroutine != null)
