@@ -56,16 +56,45 @@ public class Wall : MonoBehaviour
 
         float elapsedTime = 0f;
 
-        while (elapsedTime < 1f)
-        {
-            transform.position = Vector3.Lerp(startPosition, endPosition, elapsedTime);
-            elapsedTime += Time.deltaTime * moveSpeed / distance;  // 根据距离进行调整
+        int wallAndBoundaryLayerMask = (1 << LayerMask.NameToLayer("Wall")) | (1 << LayerMask.NameToLayer("Boundary"));
 
-            yield return null;
-        }
+// 在当前位置到终点之间进行射线检测
+RaycastHit hit;
+if (Physics.Raycast(startPosition, direction, out hit, distance, wallAndBoundaryLayerMask))
+{
+    // 如果与 "Wall" 或 "Boundary" 层的碰撞体发生了碰撞，将终点设置在碰撞点的前一点
+    endPosition = hit.point - direction.normalized * 0.08f; // 将位置调整为碰撞点的前一点，防止贴合
+}
 
-        transform.position = endPosition;
+// 进行平滑移动
+
+while (elapsedTime < 1f)
+{
+    transform.position = Vector3.Lerp(startPosition, endPosition, elapsedTime);
+    elapsedTime += Time.deltaTime * moveSpeed / distance;  // 根据距离进行调整
+    yield return null;
+}
+
+transform.position = endPosition;
     }
+
+    private void CheckBoundary()
+    {
+        // 获取边界的碰撞体
+        Collider boundaryCollider = GameObject.FindWithTag("Boundary").GetComponent<Collider>();
+
+        // 如果边界存在
+        if (boundaryCollider != null)
+        {
+            // 检测是否碰到了边界
+            if (!boundaryCollider.bounds.Contains(transform.position))
+            {
+                // 如果碰到了边界，执行相应的处理，比如标记为不可移动
+                MarkAsUnmovable();
+            }
+        }
+    }
+
 
 
 
@@ -98,7 +127,10 @@ public class Wall : MonoBehaviour
             StopCoroutine(moveCoroutine);
         }
     }
+
+    CheckBoundary();
 }
+
 
 
 

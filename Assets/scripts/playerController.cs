@@ -63,36 +63,41 @@ public class PlayerController : MonoBehaviour
         int wallLayerMask = 1 << LayerMask.NameToLayer("Wall"); // 获取 "Wall" 图层的 LayerMask
 
         // 在这里进行射线检测
-        RaycastHit hit;
-        Debug.DrawRay(transform.position, transform.forward * 4f, Color.red, 2f);
+        RaycastHit[] hits = Physics.RaycastAll(transform.position, transform.forward, 4f, wallLayerMask);
+        Wall closestWall = null;
+        float closestDistance = float.MaxValue;
 
-        if (Physics.Raycast(transform.position, transform.forward, out hit, 4f, wallLayerMask))
+        foreach (RaycastHit hit in hits)
         {
             Wall wall = hit.collider.GetComponent<Wall>();
-            Debug.Log("there is wall");
             if (wall != null)
             {
-                if (isHoldingSpace)
+                float distance = Vector3.Distance(transform.position, hit.point);
+                if (distance < closestDistance)
                 {
-                    // 如果射线击中了墙且玩家按住了空格键，标记墙为可移动
-                    wall.MarkAsMovable();
-                    currentDetectedWall = wall;
+                    closestDistance = distance;
+                    closestWall = wall;
                 }
-                else
-                {
-                    // 如果射线击中了墙但玩家没有按住空格键，标记墙为不可移动，并重置当前被检测到的墙
-                    wall.MarkAsUnmovable();
-                    currentDetectedWall = null;
-                    // Debug.Log("MarkAsUnmovable");
-                }
+            }
+        }
+
+        if (closestWall != null)
+        {
+            if (isHoldingSpace)
+            {
+                closestWall.MarkAsMovable();
+                currentDetectedWall = closestWall;
             }
             else if (currentDetectedWall != null)
             {
-                // 如果射线没有击中墙且当前有被检测到的墙，标记当前被检测到的墙为不可移动，并重置当前被检测到的墙
                 currentDetectedWall.MarkAsUnmovable();
                 currentDetectedWall = null;
-                // Debug.Log("MarkAsUnmovable");
             }
+        }
+        else if (currentDetectedWall != null)
+        {
+            currentDetectedWall.MarkAsUnmovable();
+            currentDetectedWall = null;
         }
 
         // 在这里加入终止协程的逻辑
