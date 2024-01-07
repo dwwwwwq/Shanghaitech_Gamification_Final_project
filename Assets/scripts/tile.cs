@@ -66,7 +66,7 @@ public class Tile : MonoBehaviour
     float elapsedTime = 0f;
     Quaternion startRotation = transform.rotation;
 
-    int specialLayer = LayerMask.NameToLayer("SpecialLayer");
+    // int specialLayer = LayerMask.NameToLayer("SpecialLayer");
 
     foreach (Wall wall in wallsOnTile)
     {
@@ -95,7 +95,7 @@ public class Tile : MonoBehaviour
     {
         wall.transform.parent = null;
         wall.EnableWallCollision();
-        wall.gameObject.layer = LayerMask.NameToLayer("Default");
+        // wall.gameObject.layer = LayerMask.NameToLayer("Default");
     }
 }
     // private void OnTriggerEnter(Collider other)

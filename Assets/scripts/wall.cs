@@ -44,7 +44,7 @@ public class Wall : MonoBehaviour
     public void MarkAsUnmovable()
     {
         isMovable=false;
-        Debug.Log("IsMovable="+isMovable);
+        // Debug.Log("IsMovable="+isMovable);
     }
 
     IEnumerator MoveWall(Vector3 direction)

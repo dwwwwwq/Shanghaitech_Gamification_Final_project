@@ -57,16 +57,19 @@ public class PlayerController : MonoBehaviour
         else if (Input.GetKeyUp(KeyCode.Space))
         {
             isHoldingSpace = false;
-            Debug.Log("isHoldingSpace=" + isHoldingSpace);
+            // Debug.Log("isHoldingSpace=" + isHoldingSpace);
         }
 
         int wallLayerMask = 1 << LayerMask.NameToLayer("Wall"); // 获取 "Wall" 图层的 LayerMask
 
         // 在这里进行射线检测
         RaycastHit hit;
+        Debug.DrawRay(transform.position, transform.forward * 4f, Color.red, 2f);
+
         if (Physics.Raycast(transform.position, transform.forward, out hit, 4f, wallLayerMask))
         {
             Wall wall = hit.collider.GetComponent<Wall>();
+            Debug.Log("there is wall");
             if (wall != null)
             {
                 if (isHoldingSpace)
@@ -80,7 +83,7 @@ public class PlayerController : MonoBehaviour
                     // 如果射线击中了墙但玩家没有按住空格键，标记墙为不可移动，并重置当前被检测到的墙
                     wall.MarkAsUnmovable();
                     currentDetectedWall = null;
-                    Debug.Log("MarkAsUnmovable");
+                    // Debug.Log("MarkAsUnmovable");
                 }
             }
             else if (currentDetectedWall != null)
@@ -88,7 +91,7 @@ public class PlayerController : MonoBehaviour
                 // 如果射线没有击中墙且当前有被检测到的墙，标记当前被检测到的墙为不可移动，并重置当前被检测到的墙
                 currentDetectedWall.MarkAsUnmovable();
                 currentDetectedWall = null;
-                Debug.Log("MarkAsUnmovable");
+                // Debug.Log("MarkAsUnmovable");
             }
         }
 
