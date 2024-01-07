@@ -10,7 +10,7 @@ public class Wall : MonoBehaviour
     private Tile attachedTile;  // 指向墙所在的格子的引用
     private bool isMovable=false;
     private Coroutine moveCoroutine;
-    private float moveSpeed = 4f;         // 移动速度
+    private float moveSpeed = 4.3f;         // 移动速度
 
 
     // 设置所在的格子
